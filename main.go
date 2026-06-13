@@ -104,6 +104,23 @@ func main() {
 	}
 	defer db.Close()
 
+	// Создаём таблицу, если её нет
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS parcel (
+			number INTEGER PRIMARY KEY AUTOINCREMENT,
+			client INTEGER,
+			status TEXT,
+			address TEXT,
+			created_at TEXT
+		);`)
+	if err != nil {
+		fmt.Println("Ошибка создания таблицы:", err)
+		return
+	}
+
+	// Очищаем таблицу для чистоты демо-запуска
+	db.Exec(`DELETE FROM parcel;`)
+
 	store := NewParcelStore(db)
 	service := NewParcelService(store)
 
