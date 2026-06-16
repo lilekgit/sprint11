@@ -5,16 +5,17 @@ on:
     branches:
       - main
       - master
-      - docker
     tags:
       - 'v*'
   pull_request:
     branches:
       - main
       - master
-      - docker
 
 jobs:
+  # ========================
+  # Job 1: Тестирование
+  # ========================
   test:
     runs-on: ubuntu-latest
     steps:
@@ -35,6 +36,9 @@ jobs:
       - name: Run tests
         run: go test -v ./...
 
+  # ========================
+  # Job 2: Публикация в DockerHub
+  # ========================
   publish:
     needs: test
     runs-on: ubuntu-latest
@@ -53,7 +57,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./dockerfile
+          file: ./Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/sprint12:latest
